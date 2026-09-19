@@ -58,21 +58,35 @@ st.sidebar.image("https://www.mprj.mp.br/mprj-theme/images/mprj/logo_mprj.png", 
 # --- CABEÇALHO PRINCIPAL COM LOGO E TÍTULO LADO A LADO ---
 col_logo, col_titulo = st.columns([1, 5])
 
+# --------------------------------------------------------------------------
+# 📌 NOME DA IMAGEM ATUALIZADO
+NOME_IMAGEM = "CAO CIDADANIA - LOGO 1.png"
+# --------------------------------------------------------------------------
+
 diretorio_atual = os.path.dirname(__file__)
 
-# Procura a imagem considerando a extensão .jfif e alternativas
+# Lógica de verificação do arquivo de imagem
 imagem_encontrada = None
-for extensao in [".jfif", ".JFIF", ".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"]:
-    caminho_teste = os.path.join(diretorio_atual, f"CAO CIDADANIA - LOGO{extensao}")
-    if os.path.exists(caminho_teste):
-        imagem_encontrada = caminho_teste
-        break
+extensoes_suportadas = [".png", ".PNG", ".jfif", ".JFIF", ".jpg", ".jpeg", ".JPG", ".JPEG"]
+
+# 1. Verifica se o nome digitado já possui uma extensão válida e se o arquivo existe
+caminho_direto = os.path.join(diretorio_atual, NOME_IMAGEM)
+if os.path.exists(caminho_direto):
+    imagem_encontrada = caminho_direto
+else:
+    # 2. Se o arquivo direto não for encontrado, tenta remover a extensão e buscar outras variações
+    nome_base, _ = os.path.splitext(NOME_IMAGEM)
+    for ext in extensoes_suportadas:
+        caminho_teste = os.path.join(diretorio_atual, f"{nome_base}{ext}")
+        if os.path.exists(caminho_teste):
+            imagem_encontrada = caminho_teste
+            break
 
 with col_logo:
     if imagem_encontrada:
         st.image(imagem_encontrada, width=130)
     else:
-        st.warning("⚠️ Imagem 'CAO CIDADANIA - LOGO.jfif' não encontrada no diretório.")
+        st.warning(f"⚠️ Imagem '{NOME_IMAGEM}' não encontrada no diretório.")
 
 with col_titulo:
     st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")

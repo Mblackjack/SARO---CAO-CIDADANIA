@@ -5,6 +5,7 @@ Interface gráfica interativa em Streamlit para o SARO - CAO Cidadania.
 """
 
 import streamlit as st
+import os
 from datetime import date
 from classificador_denuncias import ClassificadorDenuncias
 
@@ -51,10 +52,27 @@ except Exception as e:
     st.error(f"Erro ao iniciar o sistema: {e}")
     st.stop()
 
-# Cabeçalho e Barra Lateral
+# Barra Lateral (Logo Oficial do MPRJ)
 st.sidebar.image("https://www.mprj.mp.br/mprj-theme/images/mprj/logo_mprj.png", width=180)
-st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")
-st.markdown("*Versão 3.0* | Triagem, Gestão e Encaminhamento de Ouvidorias com Inteligência Artificial")
+
+# --- CABEÇALHO PRINCIPAL COM LOGO E TÍTULO LADO A LADO ---
+col_logo, col_titulo = st.columns([1, 5])
+
+# Caminho da imagem local
+caminho_logo = os.path.join(os.path.dirname(__file__), "CAO CIDADANIA LOGO.png")
+
+with col_logo:
+    # Exibe a imagem se existir no diretório, caso contrário exibe um aviso
+    if os.path.exists(caminho_logo):
+        st.image(caminho_logo, width=130)
+    else:
+        # Fallback para caso o arquivo seja .jpg ou esteja em outro formato
+        st.image("CAO CIDADANIA LOGO.jpg", width=130)
+
+with col_titulo:
+    st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")
+    st.markdown("*Versão 3.0* | Triagem, Gestão e Encaminhamento de Ouvidorias com Inteligência Artificial")
+
 st.divider()
 
 # --- FORMULÁRIO DE REGISTRO ---
@@ -86,7 +104,6 @@ with st.form("form_reg", clear_on_submit=True):
     if st.form_submit_button("🔍 Registrar e Classificar Ouvidoria", use_container_width=True):
         if municipio and denuncia:
             with st.spinner("Classificando via IA e Integrando ao SharePoint..."):
-                # Envia os dados para processamento no backend
                 res, sucesso = classificador.processar_denuncia(
                     num_com=num_com,
                     num_mprj=num_mprj,
@@ -112,7 +129,6 @@ if st.session_state.resultado:
     st.divider()
     st.markdown("### ✅ Resultado da Classificação e Encaminhamento")
     
-    # Caixa principal com a hierarquia territorial e atribuição
     st.markdown(f"""
     <div class="caixa-resultado">
         <div style="display: flex; justify-content: space-between;">
@@ -128,7 +144,6 @@ if st.session_state.resultado:
     </div>
     """, unsafe_allow_html=True)
     
-    # Badges de Tema, Subtema e Classificação
     col_t1, col_t2, col_t3 = st.columns(3)
     col_t1.markdown(f'<div class="badge-verde">Tema: {res["tema"]}</div>', unsafe_allow_html=True)
     col_t2.markdown(f'<div class="badge-verde">Subtema: {res["subtema"]}</div>', unsafe_allow_html=True)
@@ -138,7 +153,6 @@ if st.session_state.resultado:
     st.markdown("**Resumo Automático da IA:**")
     st.markdown(f'<div class="resumo-box">{res["resumo"]}</div>', unsafe_allow_html=True)
     
-    # Expander para conferência do texto original
     with st.expander("📄 Ver Descrição Completa da Ouvidoria"):
         st.write(res['denuncia_completa'])
     

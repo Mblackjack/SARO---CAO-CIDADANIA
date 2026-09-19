@@ -1,103 +1,114 @@
 {
-  "Alimentação": [
-    "Alimentação e Bebidas",
-    "Lanchonetes e Restaurantes",
-    "Resíduos de Agrotóxicos e Outros Contaminantes"
+  "Improbidade Administrativa/Lei Anticorrupção": [
+    "Enriquecimento Ilícito",
+    "Dano ao Erário",
+    "Violação dos Princípios",
+    "Lei Anticorrupção da PJ (Lei nº 12846/13)",
+    "Improbidade relacionada a eleições",
+    "Improbidade prevista em Leis extravagantes",
+    "Outros"
   ],
-  "Comércio": [
-    "Lojas físicas em geral",
-    "Supermercados e Mercearias",
-    "Vendas On-line",
-    "Vendas por Telefone ou Catálogo"
+  "Transparência": [
+    "Portal da Transparência",
+    "Lei de Acesso à Informação",
+    "Outros"
   ],
-  "Educação": [
-    "Cursos",
-    "Escolas",
-    "Faculdades"
+  "Administração Tributária": [
+    "Arrecadação ou Aplicação de Tributos",
+    "Falta de repasse de contribuição previdenciária",
+    "Estruturação da administração tributária",
+    "Legislação tributária"
   ],
-  "Finanças": [
-    "Bancos e Financeiras",
-    "Cartões",
-    "Consórcios",
-    "Previdência Privada",
-    "Seguros",
-    "Serviços de Proteção ao Crédito",
-    "Tributos"
+  "Controle Interno/Procuradoria Jurídica": [
+    "Procuradorias",
+    "Consultorias",
+    "Controladorias"
   ],
-  "Habitação": [
-    "Construtoras",
-    "Financiamentos",
-    "Imóveis"
+  "Gestão de Pessoas/Servidores Públicos": [
+    "Abuso de Poder",
+    "Abandono de Função/Descumprimento de carga horário/'funcionário fantasma'",
+    "Acumulação ilícita de cargo público",
+    "Ausência de resposta a requisição ministerial",
+    "Assédio moral",
+    "Cessão de servidores",
+    "Carência de servidores",
+    "Concurso público - irregularidade no certame, anulação/revogação, preterição de candidato",
+    "Contratações temporárias de servidores públicos",
+    "Descumprimento de descisão/ordem judicial",
+    "Desídia funcional",
+    "Desvio de função",
+    "Nepotismo",
+    "Falta de Pagamento de salário de servidores",
+    "Nomeação irregular para cargos em comissão ou funções de confiança",
+    "Pagamento irregular de vencimentos, gratificações, diárias, auxílios ou adicionais",
+    "Terceirização de mão-de-obra"
   ],
-  "Informações": [
-    "Publicidade",
-    "Rótulos e Manuais",
-    "Segurança e Privacidade de Dados"
+  "Bens públicos": [
+    "Alienação de Bens móveis",
+    "Alienação de bens imóveis",
+    "Cessão de uso de bens públicos",
+    "Desapropriação",
+    "Uso irregular de veículos ou outros bens públicos"
   ],
-  "Lazer": [
-    "Casas de Show",
-    "Cinemas",
-    "Clubes",
-    "Esportes",
-    "Hotéis",
-    "Parque de Diversões",
-    "Promotoras de Eventos",
-    "Teatros",
-    "Turismo"
+  "Responsabilidade Fiscal": [
+    "Descumprimento da Lei de Responsabilidade Fiscal",
+    "Prestação de Contas",
+    "Desvio de verbas vinculadas a programas específicos"
   ],
-  "Produtos": [
-    "Brinquedos",
-    "Combustíveis",
-    "Eletrodomésticos e Utensílios do Lar",
-    "Eletrônicos e Informática",
-    "Gás de Cozinha (Botijão)",
-    "Material de Construção",
-    "Papelaria e Livros",
-    "Químicos e Biológicos",
-    "Veículos"
+  "Licitações e Contratos": [
+    "Superfaturamento",
+    "Direcionamento de licitação",
+    "Aquisição de bens ou serviços comuns",
+    "Contratação de obras ou serviços de engenharia",
+    "Escola de trabalho técnico científico ou artístico",
+    "Contratação na modalidade diálogo competitivo",
+    "Concessão, permissão ou autorização de serviços públicos",
+    "Concessão, permissão ou autorização de serviço de transporte público",
+    "Contratação direta/Dispensa indevida de licitação de artistas/bandas",
+    "Contratação direta/Dispensa indevida de licitação de advocacia/consultoria/contabilidade",
+    "Contratação direta/Dispensa indevida de licitação para bens ou serviços",
+    "Contratação de infraestrutura para festas e eventos",
+    "Contratação de OS para gestão de serviços públicos",
+    "Contratação de serviço de iluminação pública",
+    "Contratação de serviço de limpeza urbana",
+    "Contratação de serviço de informática",
+    "Locação de máquinas pesadas (tratores, etc.)",
+    "Locação de veículos (automóveis, caminhões)"
   ],
-  "Saúde": [
-    "Farmácias e Drogarias",
-    "Hospitais e Clínicas",
-    "Medicamentos e Cosméticos",
-    "Planos de Saúde",
-    "Profissionais Liberais",
-    "Óticas"
+  "Sistema Prisional": [
+    "Assistência Material",
+    "Alimentação no Sistema Penal",
+    "Polícia Penal",
+    "Estabelecimento Penal"
   ],
-  "Serviços": [
-    "Academias e Afins",
-    "Assistência Jurídica",
-    "Assistência Técnica",
-    "DETRAN e Centros de Formação de Condutores",
-    "Estacionamentos",
-    "Funerários",
-    "Gás",
-    "Iluminação Pública",
-    "Locação de Veículos",
-    "Luz",
-    "Postal",
-    "Procons e Vigilância Sanitária (Criação e Estruturação)",
-    "SAC",
-    "Serviços On-line (E-mails, Aplicativos, Redes Sociais, Hospedagem de Sites, etc.)",
-    "Sistemas de Pagamento Automático (em Pedágios, em Estacionamentos, etc.)",
-    "Água"
+  "Segurança Pública": [
+    "Delegacias de Polícia",
+    "Guarda Municipal",
+    "Instituto Médico Legal",
+    "Ocupação de Território por Criminosos",
+    "Plano Municipal de Segurança",
+    "Sistema Único de Segurança Pública"
   ],
-  "Telecomunicações": [
-    "Internet (Conexão)",
-    "TV por Assinatura",
-    "Telefonia (Fixa e Móvel)"
+  "Assistência Social": [
+    "Equipamentos do SUAS (CRAS, CREAS, CENTRO POP etc.)",
+    "Irregularidades na concessão de benefícios sociais",
+    "Conselhos Sociais",
+    "Enchentes e desastres Naturais",
+    "População em Situação de Rua",
+    "Segurança Alimentar"
   ],
-  "Transporte": [
-    "Aéreo",
-    "Barcas",
-    "De Mercadoria",
-    "Escolar",
-    "Metrô",
-    "Passagens e Cartões Recarregáveis",
-    "Pedágios e Rodovias",
-    "Trem",
-    "Táxi e Aplicativos de Transporte",
-    "VLT, Bondes e Afins",
-    "Ônibus"
+  "Direitos Humanos e Minorias": [
+    "Direito a reserva de cotas em concursos",
+    "Violação dos Direitos Humanos",
+    "Comunidades Terapêuticas",
+    "População LGBTQI+",
+    "Discriminação Racial",
+    "Liberdade de Informação e expressão"
+  ],
+  "Residual": [
+    "Fomento ao ambiente econômico",
+    "Governo Eletrônico",
+    "Irregularidades na prestação de serviços públicos",
+    "Irregularidades na concessão de autorização/alvará"
   ]
 }

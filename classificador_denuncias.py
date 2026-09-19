@@ -17,8 +17,16 @@ from datetime import datetime
 
 class ClassificadorDenuncias:
     def __init__(self):
-        # Configuração do Cliente Gemini
+        # 1. Recupera a chave da API dos secrets do Streamlit
         api_key = st.secrets.get("GOOGLE_API_KEY")
+        
+        # Validação amigável se a chave estiver ausente
+        if not api_key:
+            st.error("🔑 A chave GOOGLE_API_KEY não foi encontrada nos Secrets do Streamlit Cloud.")
+            st.info("Aceda a 'Manage app' -> 'Settings' -> 'Secrets' e adicione: GOOGLE_API_KEY = 'sua_chave_aqui'")
+            st.stop()
+            
+        # Inicializa o cliente oficial da biblioteca google-genai
         self.client = genai.Client(api_key=api_key)
         self.model_name = "gemini-2.5-flash"
         
@@ -52,11 +60,9 @@ class ClassificadorDenuncias:
 
         for nucleo_nome, promotorias_list in self.base_promotorias.items():
             for item in promotorias_list:
-                # Verifica se o município está presente nesta promotoria
                 municipios_normalizados = [self.remover_acentos(m.upper()) for m in item["municipios"]]
                 
                 if mun_busca in municipios_normalizados or any(m in mun_busca for m in municipios_normalizados):
-                    # Verifica se a atribuição corresponde
                     atribuicoes_normalizadas = [self.remover_acentos(a.upper()) for a in item["atribuicoes"]]
                     
                     if atrib_busca in atribuicoes_normalizadas or any(a in atrib_busca for a in atribuicoes_normalizadas):
@@ -90,8 +96,6 @@ class ClassificadorDenuncias:
         Processa a denúncia completa: classifica via Gemini IA, busca o endereçamento correto
         e faz o envio dos dados via webhook ao Power Automate / SharePoint.
         """
-        
-        # 1. Executar Classificação com Inteligência Artificial
         catalogo_temas = json.dumps(self.temas_subtemas, ensure_ascii=False)
         
         prompt = f"""
@@ -144,13 +148,11 @@ Retorne ESTRITAMENTE um JSON com as seguintes chaves:
                 "resumo": "Processamento manual necessário"
             }
 
-        # 2. Identificar Núcleo e Promotoria no Mapeamento
         info_territorial = self.buscar_promotoria(
             municipio_informado=municipio,
             atribuicao_identificada=dados_ia.get("atribuicao", "")
         )
 
-        # 3. Montar o Dicionário Final de Saída
         dados_final = {
             "num_com": num_com,
             "num_mprj": num_mprj,
@@ -171,7 +173,6 @@ Retorne ESTRITAMENTE um JSON com as seguintes chaves:
             "data_processamento": datetime.now().strftime("%d/%m/%Y %H:%M")
         }
 
-        # 4. Envio dos Dados via Webhook para o SharePoint (Power Automate)
         sucesso = False
         if self.webhook_url:
             try:

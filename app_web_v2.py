@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
+"""
+app_web_v2.py
+Interface gráfica interativa em Streamlit para o SARO - CAO Cidadania.
+"""
+
 import streamlit as st
+from datetime import date
 from classificador_denuncias import ClassificadorDenuncias
 
-st.set_page_config(page_title="SARO - MPRJ", layout="wide", page_icon="⚖️")
+# Configuração da página web
+st.set_page_config(page_title="SARO - CAO Cidadania | MPRJ", layout="wide", page_icon="⚖️")
 
-# Estilo CSS para replicar o visual da versão anterior
+# Estilização CSS para preservar a identidade visual institucional do MPRJ
 st.markdown("""
 <style>
     .caixa-resultado {
@@ -19,11 +26,12 @@ st.markdown("""
     .badge-verde {
         background-color: #e8f5e9;
         color: #2e7d32;
-        padding: 10px 20px;
+        padding: 8px 16px;
         border-radius: 8px;
         font-weight: bold;
         display: inline-block;
         margin-right: 10px;
+        margin-bottom: 8px;
         border: 1px solid #c8e6c9;
     }
     .resumo-box { background-color: #f0f2f6; padding: 15px; border-radius: 8px; border-left: 5px solid #960018; }
@@ -32,81 +40,107 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Gerenciamento de estado da sessão
 if "resultado" not in st.session_state:
     st.session_state.resultado = None
 
-# Inicialização do Classificador
+# Inicialização do Classificador de Denúncias
 try:
     classificador = ClassificadorDenuncias()
 except Exception as e:
-    st.error(f"Erro ao iniciar sistema: {e}")
+    st.error(f"Erro ao iniciar o sistema: {e}")
     st.stop()
 
+# Cabeçalho e Barra Lateral
 st.sidebar.image("https://www.mprj.mp.br/mprj-theme/images/mprj/logo_mprj.png", width=180)
-st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Consumidor")
-st.markdown("*Versão 3.0* | Registro e Gestão de Ouvidorias com auxílio de Inteligência Artificial")
+st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")
+st.markdown("*Versão 3.0* | Triagem, Gestão e Encaminhamento de Ouvidorias com Inteligência Artificial")
 st.divider()
 
 # --- FORMULÁRIO DE REGISTRO ---
 with st.form("form_reg", clear_on_submit=True):
     st.markdown('<p class="titulo-custom">📝 Novo Registro de Ouvidoria</p>', unsafe_allow_html=True)
     
+    # Linha 1: Números de Identificação
     col1, col2 = st.columns(2)
     num_com = col1.text_input("Nº de Comunicação")
     num_mprj = col2.text_input("Nº MPRJ")
     
-    endereco = st.text_input("Endereço Completo")
-    denuncia = st.text_area("Descrição da Ouvidoria", height=150)
+    # Linha 2: Datas
+    col_d1, col_d2 = st.columns(2)
+    data_carga = col_d1.date_input("Data de Carga", value=date.today()).strftime("%d/%m/%Y")
+    data_envio = col_d2.date_input("Data de Envio", value=date.today()).strftime("%d/%m/%Y")
     
-    f1, f2 = st.columns(2)
-    responsavel = f1.radio("Responsável:", ["Elias", "Matheus", "Ana Beatriz", "Sônia", "Priscila"], horizontal=True)
-    vencedor = f2.radio("Consumidor vencedor?", ["Sim", "Não"], horizontal=True)
+    # Linha 3: Município e Remetente
+    col_m1, col_m2 = st.columns(2)
+    municipio = col_m1.text_input("Município do Fato")
+    quem_enviou = col_m2.text_input("Quem Enviou (Órgão / Setor / Cidadão)")
     
-    if st.form_submit_button("🔍Registrar Ouvidoria", use_container_width=True):
-        if endereco and denuncia:
-            with st.spinner("Processando e Integrando ao SharePoint..."):
-                # Agora o classificador retorna o resultado e o status do envio
-                res, sucesso = classificador.processar_denuncia(endereco, denuncia, num_com, num_mprj, vencedor, responsavel)
+    # Linha 4: Descrição do Fato
+    denuncia = st.text_area("Descrição da Ouvidoria / Denúncia", height=150)
+    
+    # Linha 5: Responsável pela Triagem
+    responsavel = st.radio("Responsável pela Triagem:", ["Elias", "Matheus", "Ana Beatriz", "Sônia", "Priscila"], horizontal=True)
+    
+    # Botão de Submissão
+    if st.form_submit_button("🔍 Registrar e Classificar Ouvidoria", use_container_width=True):
+        if municipio and denuncia:
+            with st.spinner("Classificando via IA e Integrando ao SharePoint..."):
+                # Envia os dados para processamento no backend
+                res, sucesso = classificador.processar_denuncia(
+                    num_com=num_com,
+                    num_mprj=num_mprj,
+                    data_carga=data_carga,
+                    data_envio=data_envio,
+                    municipio=municipio,
+                    quem_enviou=quem_enviou,
+                    denuncia=denuncia,
+                    responsavel=responsavel
+                )
                 st.session_state.resultado = res
                 
                 if sucesso:
-                    st.success("✅ Enviado com sucesso para a Tabela_SARO no SharePoint!")
+                    st.success("✅ Ouvidoria registrada e enviada com sucesso para o SharePoint!")
                 else:
-                    st.warning("⚠️ Classificado, mas o SharePoint não confirmou o recebimento. Verifique o Power Automate.")
+                    st.warning("⚠️ Ouvidoria processada, porém o SharePoint não confirmou o recebimento via Power Automate.")
         else:
-            st.error("Preencha Endereço e Descrição.")
+            st.error("Por favor, preencha obrigatoriamente o Município e a Descrição da Ouvidoria.")
 
-# --- TÓPICO: REGISTRO DA CLASSIFICAÇÃO ATUAL ---
+# --- EXIBIÇÃO DO RESULTADO DA CLASSIFICAÇÃO ---
 if st.session_state.resultado:
     res = st.session_state.resultado
     st.divider()
-    st.markdown("### ✅ Resultado da Classificação Atual")
+    st.markdown("### ✅ Resultado da Classificação e Encaminhamento")
     
-    # Box com informações principais
+    # Caixa principal com a hierarquia territorial e atribuição
     st.markdown(f"""
     <div class="caixa-resultado">
         <div style="display: flex; justify-content: space-between;">
             <p><span class="label-vermelho">Nº Comunicação:</span> {res['num_com']}</p>
             <p><span class="label-vermelho">Nº MPRJ:</span> {res['num_mprj']}</p>
         </div>
+        <hr style="margin: 10px 0;">
         <p>📍 <span class="label-vermelho">Município:</span> {res['municipio']}</p>
+        <p>🏢 <span class="label-vermelho">Núcleo:</span> {res['nucleo']}</p>
+        <p>⚖️ <span class="label-vermelho">Atribuição:</span> {res['atribuicao']}</p>
         <p>🏛️ <span class="label-vermelho">Promotoria Responsável:</span> {res['promotoria']}</p>
+        <p>📬 <span class="label-vermelho">Destino / Secretaria:</span> {res['destino_secretaria']}</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Badges de Tema, Subtema e Empresa
+    # Badges de Tema, Subtema e Classificação
     col_t1, col_t2, col_t3 = st.columns(3)
     col_t1.markdown(f'<div class="badge-verde">Tema: {res["tema"]}</div>', unsafe_allow_html=True)
     col_t2.markdown(f'<div class="badge-verde">Subtema: {res["subtema"]}</div>', unsafe_allow_html=True)
-    col_t3.markdown(f'<div class="badge-verde">Empresa: {res["empresa"]}</div>', unsafe_allow_html=True)
+    col_t3.markdown(f'<div class="badge-verde">Classificação: {res["classificacao_ouvidoria"]}</div>', unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("**Resumo da IA (Máximo 10 palavras):**")
+    st.markdown("**Resumo Automático da IA:**")
     st.markdown(f'<div class="resumo-box">{res["resumo"]}</div>', unsafe_allow_html=True)
     
-    # Expander com a descrição original
-    with st.expander("📄 Ver Descrição da Ouvidoria"):
-        st.write(res['denuncia'])
+    # Expander para conferência do texto original
+    with st.expander("📄 Ver Descrição Completa da Ouvidoria"):
+        st.write(res['denuncia_completa'])
     
     if st.button("Limpar Tela para Novo Registro"):
         st.session_state.resultado = None
@@ -114,21 +148,20 @@ if st.session_state.resultado:
 
 st.divider()
 
-# --- TÓPICO: REGISTRO DE OUVIDORIAS (LINK SHAREPOINT) ---
+# --- SEÇÃO DO LINK SHAREPOINT ---
 st.markdown('<p class="titulo-custom">📊 Registro de Ouvidorias (SharePoint)</p>', unsafe_allow_html=True)
 
-# Atualizado para o seu link do SharePoint do MPRJ
-url_planilha = "https://mprj.sharepoint.com/:x:/r/sites/cao.consumidor.equipe/_layouts/15/Doc.aspx?sourcedoc=%7B325C89C9-7198-45D7-9324-B1C54BD8E744%7D&file=Tabela_SARO.xlsx"
+url_planilha = "https://mprj.sharepoint.com/:x:/r/sites/cao.cidadania.equipe/_layouts/15/Doc.aspx?file=Tabela_SARO_Cidadania.xlsx"
 
 st.markdown(f"""
 <div class="area-planilha">
-    <p>Acesse a planilha Tabela_SARO oficial atualizada em tempo real:</p>
+    <p>Acesse a base de dados oficial atualizada em tempo real no SharePoint:</p>
     <a href="{url_planilha}" target="_blank" style="font-weight: bold; color: #960018; font-size: 1.2rem;">
-        📂 Abrir Planilha de Ouvidorias (SharePoint)
+        📂 Abrir Tabela de Ouvidorias (CAO Cidadania)
     </a>
 </div>
 """, unsafe_allow_html=True)
 
 st.divider()
 
-st.caption("SARO v2.0 - Sistema Automático de Registro de Ouvidorias | Ministério Público do Rio de Janeiro (Created by Matheus Pereira Barreto [62006659])")
+st.caption("SARO v3.0 - Sistema Automático de Registro de Ouvidorias | CAO Cidadania - Ministério Público do Rio de Janeiro")

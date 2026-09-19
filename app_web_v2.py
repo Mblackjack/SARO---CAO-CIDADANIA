@@ -58,16 +58,21 @@ st.sidebar.image("https://www.mprj.mp.br/mprj-theme/images/mprj/logo_mprj.png", 
 # --- CABEÇALHO PRINCIPAL COM LOGO E TÍTULO LADO A LADO ---
 col_logo, col_titulo = st.columns([1, 5])
 
-# Caminho da imagem local
-caminho_logo = os.path.join(os.path.dirname(__file__), "CAO CIDADANIA LOGO.png")
+diretorio_atual = os.path.dirname(__file__)
+
+# Procura a imagem considerando a extensão .jfif e alternativas
+imagem_encontrada = None
+for extensao in [".jfif", ".JFIF", ".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG"]:
+    caminho_teste = os.path.join(diretorio_atual, f"CAO CIDADANIA - LOGO{extensao}")
+    if os.path.exists(caminho_teste):
+        imagem_encontrada = caminho_teste
+        break
 
 with col_logo:
-    # Exibe a imagem se existir no diretório, caso contrário exibe um aviso
-    if os.path.exists(caminho_logo):
-        st.image(caminho_logo, width=130)
+    if imagem_encontrada:
+        st.image(imagem_encontrada, width=130)
     else:
-        # Fallback para caso o arquivo seja .jpg ou esteja em outro formato
-        st.image("CAO CIDADANIA LOGO.jpg", width=130)
+        st.warning("⚠️ Imagem 'CAO CIDADANIA - LOGO.jfif' não encontrada no diretório.")
 
 with col_titulo:
     st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")

@@ -56,12 +56,11 @@ except Exception as e:
 st.sidebar.image("https://www.mprj.mp.br/mprj-theme/images/mprj/logo_mprj.png", width=180)
 
 # --- CABEÇALHO PRINCIPAL COM LOGO E TÍTULO LADO A LADO ---
+# Divisão da tela: 1 parte para a logo e 5 partes para o título
 col_logo, col_titulo = st.columns([1, 5])
 
-# --------------------------------------------------------------------------
-# 📌 NOME DA IMAGEM ATUALIZADO
+# Nome do arquivo de imagem do CAO Cidadania
 NOME_IMAGEM = "CAO CIDADANIA - LOGO 1.png"
-# --------------------------------------------------------------------------
 
 diretorio_atual = os.path.dirname(__file__)
 
@@ -69,12 +68,10 @@ diretorio_atual = os.path.dirname(__file__)
 imagem_encontrada = None
 extensoes_suportadas = [".png", ".PNG", ".jfif", ".JFIF", ".jpg", ".jpeg", ".JPG", ".JPEG"]
 
-# 1. Verifica se o nome digitado já possui uma extensão válida e se o arquivo existe
 caminho_direto = os.path.join(diretorio_atual, NOME_IMAGEM)
 if os.path.exists(caminho_direto):
     imagem_encontrada = caminho_direto
 else:
-    # 2. Se o arquivo direto não for encontrado, tenta remover a extensão e buscar outras variações
     nome_base, _ = os.path.splitext(NOME_IMAGEM)
     for ext in extensoes_suportadas:
         caminho_teste = os.path.join(diretorio_atual, f"{nome_base}{ext}")
@@ -82,14 +79,16 @@ else:
             imagem_encontrada = caminho_teste
             break
 
+# Exibição da Imagem e Título no Cabeçalho
 with col_logo:
     if imagem_encontrada:
-        st.image(imagem_encontrada, width=130)
+        # PONTO CHAVE: use_container_width=True faz a imagem se ajustar perfeitamente à largura da coluna col_logo
+        st.image(imagem_encontrada, use_container_width=True)
     else:
         st.warning(f"⚠️ Imagem '{NOME_IMAGEM}' não encontrada no diretório.")
 
 with col_titulo:
-    st.title("⚖️ Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")
+    st.title("Sistema Automático de Registro de Ouvidorias (SARO) | CAO Cidadania")
     st.markdown("*Versão 3.0* | Triagem, Gestão e Encaminhamento de Ouvidorias com Inteligência Artificial")
 
 st.divider()

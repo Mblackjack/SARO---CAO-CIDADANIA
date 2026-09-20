@@ -131,7 +131,7 @@ with st.form("form_reg", clear_on_submit=True):
     denuncia = st.text_area("Descrição da Ouvidoria / Denúncia", height=150)
     
     # Linha 5: Responsável pela Triagem
-    responsavel = st.radio("Responsável pela Triagem:", ["Elias", "Matheus", "Ana Beatriz", "Sônia", "Priscila"], horizontal=True)
+    responsavel = st.radio("Responsável pela Triagem:", ["Lucas", "Jaira", "Ana", "Júlia"], horizontal=True)
     
     # Botão de Submissão
     if st.form_submit_button("🔍 Registrar e Classificar Ouvidoria", use_container_width=True):

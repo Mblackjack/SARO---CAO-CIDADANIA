@@ -2,7 +2,7 @@
 """
 app_web_v2.py
 Interface gráfica interativa em Streamlit para o SARO - CAO Cidadania.
-Atualizado com a cor institucional #004F54 no mesmo padrão do CAO Consumidor.
+Atualizado: Remoção completa da integração e visualização do SharePoint.
 """
 
 import streamlit as st
@@ -13,7 +13,7 @@ from classificador_denuncias import ClassificadorDenuncias
 # Configuração da página web
 st.set_page_config(page_title="SARO - CAO Cidadania | MPRJ", layout="wide", page_icon="⚖️")
 
-# --- ESTILO CSS CUSTOMIZADO (PADRÃO REPLICADO COM A COR #004F54) ---
+# --- ESTILO CSS CUSTOMIZADO (#004F54) ---
 st.markdown("""
 <style>
     /* Caixa do resultado do processamento da IA */
@@ -48,16 +48,6 @@ st.markdown("""
         padding: 15px; 
         border-radius: 8px; 
         border-left: 5px solid #004F54; 
-    }
-    
-    /* Moldura da seção de link do SharePoint */
-    .area-planilha { 
-        border: 2px solid #004F54; 
-        padding: 25px; 
-        text-align: center; 
-        border-radius: 10px; 
-        background-color: #ffffff; 
-        margin-top: 20px; 
     }
     
     /* Estilização dos botões do Streamlit */
@@ -146,8 +136,9 @@ with st.form("form_reg", clear_on_submit=True):
     # Botão de Submissão
     if st.form_submit_button("🔍 Registrar e Classificar Ouvidoria", use_container_width=True):
         if municipio and denuncia:
-            with st.spinner("Classificando via IA e Integrando ao SharePoint..."):
-                res, sucesso = classificador.processar_denuncia(
+            with st.spinner("Classificando via IA..."):
+                # Processamento da denúncia sem verificação/envio para o SharePoint
+                res = classificador.processar_denuncia(
                     num_com=num_com,
                     num_mprj=num_mprj,
                     data_carga=data_carga,
@@ -157,12 +148,13 @@ with st.form("form_reg", clear_on_submit=True):
                     denuncia=denuncia,
                     responsavel=responsavel
                 )
-                st.session_state.resultado = res
                 
-                if sucesso:
-                    st.success("✅ Ouvidoria registrada e enviada com sucesso para o SharePoint!")
-                else:
-                    st.warning("⚠️ Ouvidoria processada, porém o SharePoint não confirmou o recebimento via Power Automate.")
+                # Se o método retornar uma tupla (resultado, status), extrai apenas o dicionário do resultado
+                if isinstance(res, tuple):
+                    res = res[0]
+                    
+                st.session_state.resultado = res
+                st.success("✅ Ouvidoria registrada e processada com sucesso!")
         else:
             st.error("Por favor, preencha obrigatoriamente o Município e a Descrição da Ouvidoria.")
 
@@ -172,53 +164,37 @@ if st.session_state.resultado:
     st.divider()
     st.markdown("### ✅ Resultado da Classificação e Encaminhamento")
     
-    # Caixa principal padronizada com a nova cor
+    # Caixa principal com os detalhes da classificação
     st.markdown(f"""
     <div class="caixa-resultado">
         <div style="display: flex; justify-content: space-between;">
-            <p><span class="label-vermelho">Nº Comunicação:</span> {res['num_com']}</p>
-            <p><span class="label-vermelho">Nº MPRJ:</span> {res['num_mprj']}</p>
+            <p><span class="label-vermelho">Nº Comunicação:</span> {res.get('num_com', '')}</p>
+            <p><span class="label-vermelho">Nº MPRJ:</span> {res.get('num_mprj', '')}</p>
         </div>
         <hr style="margin: 10px 0;">
-        <p>📍 <span class="label-vermelho">Município:</span> {res['municipio']}</p>
-        <p>🏢 <span class="label-vermelho">Núcleo:</span> {res['nucleo']}</p>
-        <p>⚖️ <span class="label-vermelho">Atribuição:</span> {res['atribuicao']}</p>
-        <p>🏛️ <span class="label-vermelho">Promotoria Responsável:</span> {res['promotoria']}</p>
-        <p>📬 <span class="label-vermelho">Destino / Secretaria:</span> {res['destino_secretaria']}</p>
+        <p>📍 <span class="label-vermelho">Município:</span> {res.get('municipio', '')}</p>
+        <p>🏢 <span class="label-vermelho">Núcleo:</span> {res.get('nucleo', '')}</p>
+        <p>⚖️ <span class="label-vermelho">Atribuição:</span> {res.get('atribuicao', '')}</p>
+        <p>🏛️ <span class="label-vermelho">Promotoria Responsável:</span> {res.get('promotoria', '')}</p>
+        <p>📬 <span class="label-vermelho">Destino / Secretaria:</span> {res.get('destino_secretaria', '')}</p>
     </div>
     """, unsafe_allow_html=True)
     
     col_t1, col_t2, col_t3 = st.columns(3)
-    col_t1.markdown(f'<div class="badge-verde">Tema: {res["tema"]}</div>', unsafe_allow_html=True)
-    col_t2.markdown(f'<div class="badge-verde">Subtema: {res["subtema"]}</div>', unsafe_allow_html=True)
-    col_t3.markdown(f'<div class="badge-verde">Classificação: {res["classificacao_ouvidoria"]}</div>', unsafe_allow_html=True)
+    col_t1.markdown(f'<div class="badge-verde">Tema: {res.get("tema", "")}</div>', unsafe_allow_html=True)
+    col_t2.markdown(f'<div class="badge-verde">Subtema: {res.get("subtema", "")}</div>', unsafe_allow_html=True)
+    col_t3.markdown(f'<div class="badge-verde">Classificação: {res.get("classificacao_ouvidoria", "")}</div>', unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("**Resumo Automático da IA:**")
-    st.markdown(f'<div class="resumo-box">{res["resumo"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="resumo-box">{res.get("resumo", "")}</div>', unsafe_allow_html=True)
     
     with st.expander("📄 Ver Descrição Completa da Ouvidoria"):
-        st.write(res['denuncia_completa'])
+        st.write(res.get('denuncia_completa', res.get('denuncia', '')))
     
     if st.button("Limpar Tela para Novo Registro"):
         st.session_state.resultado = None
         st.rerun()
-
-st.divider()
-
-# --- SEÇÃO DO LINK SHAREPOINT ---
-st.markdown('<p class="titulo-custom">📊 Registro de Ouvidorias (SharePoint)</p>', unsafe_allow_html=True)
-
-url_planilha = "https://mprj.sharepoint.com/:x:/r/sites/cao.cidadania.equipe/_layouts/15/Doc.aspx?file=Tabela_SARO_Cidadania.xlsx"
-
-st.markdown(f"""
-<div class="area-planilha">
-    <p>Acesse a base de dados oficial atualizada em tempo real no SharePoint:</p>
-    <a href="{url_planilha}" target="_blank" style="font-weight: bold; color: #004F54; font-size: 1.2rem;">
-        📂 Abrir Tabela de Ouvidorias (CAO Cidadania)
-    </a>
-</div>
-""", unsafe_allow_html=True)
 
 st.divider()
 
